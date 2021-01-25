@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace NeuralNetworksLibrary.Functions
+namespace NeuralNetworksLibrary.ActivationFunctions
 {
     public abstract class ActivationFunction
     {

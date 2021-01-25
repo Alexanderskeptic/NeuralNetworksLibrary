@@ -1,6 +1,7 @@
-﻿using static System.Math;
+﻿using Newtonsoft.Json;
+using static System.Math;
 
-namespace NeuralNetworksLibrary.Functions
+namespace NeuralNetworksLibrary.ActivationFunctions
 {
     /// <summary>
     /// Сигмоида
@@ -9,12 +10,8 @@ namespace NeuralNetworksLibrary.Functions
     {
         public Sigmoid(double alpha) : base(alpha) { }
 
-        public double Activate(double x) => 1 / (1 + Exp(alpha * -x));
+        public double Activate(double x) => 1.0 / (1.0 + Exp(alpha * (-x)));
 
-        public double Derivate(double x)
-        {
-            double f = Activate(x);
-            return alpha * f * (1 - f);
-        }
+        public double Derivate(double x) => (alpha * Exp(alpha * (-x))) / Pow((Exp(alpha * (-x)) + 1.0), 2);
     }
 }

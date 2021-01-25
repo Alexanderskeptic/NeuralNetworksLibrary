@@ -1,6 +1,7 @@
-﻿using static System.Math;
+﻿using Newtonsoft.Json;
+using static System.Math;
 
-namespace NeuralNetworksLibrary.Functions
+namespace NeuralNetworksLibrary.ActivationFunctions
 {
     /// <summary>
     /// Смягчённый выпрямитель
@@ -9,8 +10,8 @@ namespace NeuralNetworksLibrary.Functions
     {
         public SoftPlus(double alpha) : base(alpha) { }
 
-        public double Activate(double x) => Log(1 + Exp(alpha * x));
+        public double Activate(double x) => Log(1.0 + Exp(alpha * x));
 
-        public double Derivate(double x) => alpha / (1 + Exp(-x * alpha));
+        public double Derivate(double x) => (alpha * Exp(alpha * x)) / (1.0 + Exp(alpha * x));
     }
 }

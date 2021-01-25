@@ -5,27 +5,27 @@ using static System.Math;
 namespace NeuralNetworksLibrary.ActivationFunctions
 {
     /// <summary>
-    /// Гиперболический тангенс
+    /// Арктангенс
     /// </summary>
-    public class Tanh : ActivationFunction, IActivationFunction
+    public class Arctan : ActivationFunction, IActivationFunction
     {
         [JsonProperty("beta")]
         private double beta;
 
-        public Tanh(double alpha, double beta) : base(alpha) => this.beta = beta;
+        public Arctan(double alpha, double beta) : base(alpha) => this.beta = beta;
 
         /// <summary>
         /// Функция активации
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public double Activate(double x) => alpha * Math.Tanh(beta * x);
+        public double Activate(double x) => alpha * Atan(beta * x);
 
         /// <summary>
         /// Первая производная функции активации
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public double Derivate(double x) => alpha * beta * (1.0 - Pow(Tanh(beta * x), 2));
+        public double Derivate(double x) => (alpha * beta) / (Pow(beta, 2) * Pow(x, 2) + 1);
     }
 }
