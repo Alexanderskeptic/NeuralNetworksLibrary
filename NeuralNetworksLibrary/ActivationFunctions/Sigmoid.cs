@@ -4,7 +4,7 @@ using static System.Math;
 namespace NeuralNetworksLibrary.ActivationFunctions
 {
     /// <summary>
-    /// Сигмоида
+    /// Сигмовидная функция
     /// </summary>
     public class Sigmoid : ActivationFunction, IActivationFunction
     {
