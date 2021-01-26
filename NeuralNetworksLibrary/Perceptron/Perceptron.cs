@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using LinearAlgebraLibrary;
-using static System.Console;
 using System;
 
 namespace NeuralNetworksLibrary.Perceptron
@@ -136,13 +135,63 @@ namespace NeuralNetworksLibrary.Perceptron
 #endif
         }
 
+        #region Сохранить модель в JSON файл
+        /// <summary>
+        /// Сохранить модель в JSON файл
+        /// </summary>
+        /// <param name="path"> Путь сохранения, включая название файла и формат </param>
+        public void SaveModel(string FileName)
+        {
+            if (string.IsNullOrWhiteSpace(FileName))
+                throw new ArgumentException("File name is empty", nameof(FileName));
+
+            var settings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                TypeNameHandling = TypeNameHandling.Auto
+            };
+
+            var model = new
+            {
+                lastError = LastError,
+                lastLearningTime = LastLearningTime,
+                parameters = new object[layers.Length]
+            };
+
+            for (int i = 0; i < model.parameters.Length; i++)
+            {
+                model.parameters[i] = new
+                {
+                    config = layers[i].Config,
+                    weights = layers[i].GetWeights()
+                };
+            }
+
+            using (StreamWriter file = File.CreateText(FileName))
+            {
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented,
+                    TypeNameHandling = TypeNameHandling.Auto
+                };
+                serializer.Serialize(file, model);
+            }
+        }
+        #endregion
+
         #region Загрузить модель из JSON файла
         /// <summary>
         /// Загрузить модель из JSON файла
         /// </summary>
         /// <param name="path">Путь к файлу</param>
-        public void LoadModel(string path)
+        public void LoadModel(string FileName = null)
         {
+            if (string.IsNullOrWhiteSpace(FileName))
+                throw new ArgumentException("File name is empty", nameof(FileName));
+
+            if (!File.Exists(FileName))
+                throw new ArgumentException("file does not exist", FileName);
+
             var settings = new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
@@ -161,7 +210,7 @@ namespace NeuralNetworksLibrary.Perceptron
                     }
                 }
             };
-            using (StreamReader r = new StreamReader(path))
+            using (StreamReader r = new StreamReader(FileName))
             {
                 string json = r.ReadToEnd();
                 model = JsonConvert.DeserializeAnonymousType(json, model, settings);
@@ -181,47 +230,6 @@ namespace NeuralNetworksLibrary.Perceptron
         }
         #endregion
 
-        #region Сохранить модель в JSON файл
-        /// <summary>
-        /// Сохранить модель в JSON файл
-        /// </summary>
-        /// <param name="path">Путь сохранения</param>
-        /// <returns>Имя созданного файла</returns>
-        public string SaveModel(string path)
-        {
-            var settings = new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented,
-                TypeNameHandling = TypeNameHandling.Auto
-            };
-
-            var model = new
-            {
-                lastError = LastError,
-                lastLearningTime = LastLearningTime,
-                parameters = new object[layers.Length]
-            };
-            for (int i = 0; i < model.parameters.Length; i++)
-            {
-                model.parameters[i] = new
-                {
-                    config = layers[i].Config,
-                    weights = layers[i].GetWeights()
-                };
-            }
-
-            string filename = $"model{DateTime.Now.Ticks}.json";
-            using (StreamWriter file = File.CreateText($@"{path}\{filename}"))
-            {
-                JsonSerializer serializer = new JsonSerializer
-                {
-                    Formatting = Formatting.Indented,
-                    TypeNameHandling = TypeNameHandling.Auto
-                };
-                serializer.Serialize(file, model);
-            }
-            return filename;
-        }
-        #endregion
+        
     }
 }
